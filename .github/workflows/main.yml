@@ -3,7 +3,7 @@ name: Main Taski workflow
 on:
   push:
     branches:
-      - main
+      - '**'
 
 jobs:
   backend:
@@ -73,6 +73,7 @@ jobs:
   build_backend_and_push_to_docker_hub:
     name: Push Docker image to DockerHub
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     needs: backend
     steps:
       - name: Check out the repo
@@ -94,6 +95,7 @@ jobs:
   build_frontend_and_push_to_docker_hub:
     name: Push frontend Docker image to DockerHub
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     needs: frontend
     steps:
       - name: Check out the repo
@@ -115,6 +117,7 @@ jobs:
   build_gateway_and_push_to_docker_hub:
     name: Push gateway Docker image to DockerHub
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
@@ -134,6 +137,7 @@ jobs:
 
   send_message:
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     needs:
       - build_backend_and_push_to_docker_hub
       - build_frontend_and_push_to_docker_hub
@@ -144,4 +148,4 @@ jobs:
         with:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
-          message: Образы успешно загружены!
+          message: Образы успешно загружены! github.actor
